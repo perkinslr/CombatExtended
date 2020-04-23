@@ -15,7 +15,7 @@ namespace CombatExtended
 
         protected override bool ApplyWorker(XmlDocument xml)
         {
-            if (modName.NullOrEmpty())
+	    if (modName.NullOrEmpty())
             {
                 return false;
             }

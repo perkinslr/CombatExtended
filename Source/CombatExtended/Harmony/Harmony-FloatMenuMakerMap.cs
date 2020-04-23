@@ -20,7 +20,7 @@ namespace CombatExtended.HarmonyCE
     [HarmonyPatch]
     static class FloatMenuMakerMap_PatchKnowledge
     {
-        static readonly string logPrefix = "Combat Extended :: " + typeof(FloatMenuMakerMap_PatchKnowledge).Name + " :: ";
+        // static readonly string logPrefix = "Combat Extended :: " + typeof(FloatMenuMakerMap_PatchKnowledge).Name + " :: ";
 
         const string ClassNamePart = "DisplayClass5";   //1.0: "AddHumanLikeOrders" to target <AddHumanLikeOrders>c__AnonStoreyB
         const string MethodNamePart = "g__Equip";       //1.0: "m__" to target <>m__0()

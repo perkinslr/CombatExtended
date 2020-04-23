@@ -110,7 +110,7 @@ namespace CombatExtended
                     }
                     else
                     {
-                        var transferedDensity = this.density / 2;
+                        // var transferedDensity = this.density / 2;
                         var newSmokeCloud = (Smoke)GenSpawn.Spawn(CE_ThingDefOf.Gas_BlackSmoke, freeCell, Map);
                         TransferDensityTo(newSmokeCloud, this.density / 2);
                     }

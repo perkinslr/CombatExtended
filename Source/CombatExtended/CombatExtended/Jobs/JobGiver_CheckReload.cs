@@ -56,7 +56,7 @@ namespace CombatExtended
 			if (DoReloadCheck(pawn, out gun, out ammo))
 			{
 				CompAmmoUser comp = gun.TryGetComp<CompAmmoUser>();
-				CompInventory compInventory = pawn.TryGetComp<CompInventory>();
+				// CompInventory compInventory = pawn.TryGetComp<CompInventory>();
 				// we relied on DoReloadCheck() to do error checking of many variables.
 				
 				if (!comp.TryUnload()) return null; // unload the weapon or stop trying if there was a problem.
