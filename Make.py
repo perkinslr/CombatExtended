@@ -63,7 +63,6 @@ with XMLOpen(CSPROJ) as csproj:
 
 args = ["mcs", "-nostdlib", "-langversion:Experimental", "-target:library", f'-out:{OUTPUT}', *sources, *[f'-r:{r}' for r in libraries]]
 
-print(libraries)
 t = subprocess.Popen(args)
 
 
