@@ -29,7 +29,7 @@ jobs:
           wget https://www.nuget.org/api/v2/package/Krafs.Rimworld.Ref/1.2.2753
           unzip 1.2.2753 -d reference
       - name: build
-        run: python Make.py --all-libs --reference reference/ref/net472/
+        run: python3 Make.py --all-libs --reference reference/ref/net472/
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Rebuild Assembly
