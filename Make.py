@@ -26,7 +26,7 @@ if "--help" in sys.argv or "-h" in sys.argv:
     print(usage)
     raise SystemExit(1)
 
-VERBOSE = "--verbose" in sys.argv or "-v" in sys.argv
+VERBOSE = "--verbose" in sys.argv or "-v" in sys.argv or True
 
 def findHarmony(ref):
     if "0Harmony.dll" in os.listdir(ref):
