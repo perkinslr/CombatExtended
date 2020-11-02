@@ -30,14 +30,14 @@ jobs:
           wget https://www.nuget.org/api/v2/package/Krafs.Rimworld.Ref/1.2.2753 -O rwref.zip
           unzip rwref.zip -d reference
           cp ../Make.py .
-      - name: build
-        run: python3 Make.py --all-libs --reference reference/ref/net472/
       - uses: peterjgrainger/action-create-branch@v2.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           branch: test-branch-${{ github.event.pull_request.head.ref }}-${{ github.run_number }}
 
+      - name: build
+        run: python3 Make.py --all-libs --reference reference/ref/net472/
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Rebuild Assembly
