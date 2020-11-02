@@ -19,10 +19,9 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
       - name: prepare rebuild
         run: |
+          git pull -X theirs origin ${{ github.event.pull_request.head.sha }}:
           wget https://www.nuget.org/api/v2/package/Krafs.Rimworld.Ref/1.2.2753 -O rwref.zip
           unzip rwref.zip -d reference
           wget https://raw.githubusercontent.com/perkinslr/CombatExtended/Development/Make.py -O - > Make.py
@@ -35,10 +34,6 @@ jobs:
       - name: build
         run: |
           python3 Make.py --all-libs --reference reference/ref/net472/
-          git add Assemblies/CombatExtended.dll
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-          git commit -m "Rebuild Assembly"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
