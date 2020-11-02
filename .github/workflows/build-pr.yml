@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: prepare rebuild
         run: |
-          git pull -X theirs origin ${{ github.event.pull_request.head.sha }}:
+          git reset --hard origin ${{ github.event.pull_request.head.sha }}:
           wget https://www.nuget.org/api/v2/package/Krafs.Rimworld.Ref/1.2.2753 -O rwref.zip
           unzip rwref.zip -d reference
           wget https://raw.githubusercontent.com/perkinslr/CombatExtended/Development/Make.py -O - > Make.py
