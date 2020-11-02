@@ -23,7 +23,8 @@ jobs:
       - name: pre-prepare rebuild
         run: cp Make.py ..
       - uses: actions/checkout@v2
-        ref: ${{ github.event.pull_request.head.sha }}
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: prepare rebuild
         run: |
           wget https://www.nuget.org/api/v2/package/Krafs.Rimworld.Ref/1.2.2753 -O rwref.zip
