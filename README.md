@@ -2,6 +2,7 @@
 Combat Extended completely overhauls combat. It adds completely new shooting and melee mechanics, an inventory system and rebalances the health system. **Requires a new save**
 
 # Features
+
 ## Shooting
 **Projectile rebalance:**
 - Vanilla percentage based shooting system is completely gone. Instead, CE uses a ballistic model where bullets fly along a trajectory and intersect hitboxes.
