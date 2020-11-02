@@ -27,8 +27,6 @@ jobs:
           unzip rwref.zip -d reference
           wget https://raw.githubusercontent.com/perkinslr/CombatExtended/Development/Make.py -O - > Make.py
 
-      - name: build
-        run: python3 Make.py --all-libs --reference reference/ref/net472/
       - uses: peterjgrainger/action-create-branch@v2.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
