@@ -5,8 +5,7 @@ name: Build-PR-test
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the test-gh-actions branch
 on:
-  workflow_dispatch:
-  pull_request:
+  pull_request_target:
     branches: [ Development ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -23,7 +22,7 @@ jobs:
       - name: pre-prepare rebuild
         run: cp Make.py ..
       - uses: actions/checkout@v2
-        branch: ${{ github.event.pull_request.head.sha }}
+        ref: ${{ github.event.pull_request.head.sha }}
       - name: prepare rebuild
         run: |
           wget https://www.nuget.org/api/v2/package/Krafs.Rimworld.Ref/1.2.2753 -O rwref.zip
