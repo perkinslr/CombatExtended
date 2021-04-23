@@ -390,8 +390,9 @@ namespace CombatExtended
         }
         #endregion
 
-        public virtual void RayCast(Thing launcher, VerbProperties verbProps, Vector2 origin, float shotAngle, float shotRotation, float shotHeight = 0f, float shotSpeed = -1f, float spreadDegrees = 0f, float aperatureSize = 0.03f, Thing equipment = null) {
+        public virtual void RayCast(Thing launcher, VerbProperties verbProps, Vector2 origin, float shotAngle, float shotRotation, float shotHeight = 0f, float shotSpeed = -1f, float spreadDegrees = 0f, float aperatureSizeCM = 0.03f, Thing equipment = null) {
 
+	    float aperatureSize = aperatureSizeCM / 5000f; // cm to cells
 
 	    /* Calculate a magic reference point for damage attenuation for lasers.
 	       0.06 (degrees) works out to 1mRad, which is about 2x what modern top-end lasers can do

@@ -76,6 +76,38 @@
     <displayPriorityInCategory>894</displayPriorityInCategory>
   </StatDef>
 
+  <StatDef>
+    <defName>AperatureSize</defName>
+    <label>aperature</label>
+    <description>Size of a laser's aperature (objective lens), which determines how fast the damage falls off.</description>
+    <category>Weapon</category>
+    <defaultBaseValue>5</defaultBaseValue>
+    <minValue>1</minValue>
+    <toStringStyle>FloatMaxTwo</toStringStyle>
+    <formatString>{0} cm</formatString>
+    <showIfUndefined>false</showIfUndefined>
+    <parts>
+      <li Class="StatPart_Quality">
+        <factorAwful>1</factorAwful>
+        <factorPoor>1</factorPoor>
+        <factorNormal>1</factorNormal>
+        <factorGood>1</factorGood>
+        <factorExcellent>1</factorExcellent>
+        <factorMasterwork>1</factorMasterwork>
+        <factorLegendary>1</factorLegendary>
+      </li>
+      <li Class="StatPart_Health">
+        <curve>
+          <points>
+            <li>(0,1)</li>
+            <li>(1,1)</li>
+          </points>
+        </curve>
+      </li>
+    </parts>
+    <displayPriorityInCategory>893</displayPriorityInCategory>
+  </StatDef>
+
   <!-- ========== Don't do anything, only display information to the player ========== -->
 
   <StatDef>

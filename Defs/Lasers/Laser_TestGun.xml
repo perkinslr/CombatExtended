@@ -82,6 +82,7 @@
       <SightsEfficiency>1</SightsEfficiency>
       <ShotSpread>0.06</ShotSpread>
       <SwayFactor>1.52</SwayFactor>
+      <AperatureSize>5</AperatureSize>
       <Bulk>10.90</Bulk>
       <Mass>4.30</Mass>
       <RangedWeapon_Cooldown>0.37</RangedWeapon_Cooldown>

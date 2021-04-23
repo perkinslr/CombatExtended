@@ -9,6 +9,7 @@
       <texPath>Things/Projectile/LasShotLrg</texPath>
       <shaderType>TransparentPostLight</shaderType>
       <drawSize>1.5</drawSize>
+      <color>0,255,0</color>
     </graphicData>
     <label>las blast</label>
     <beamGraphic>BeamGraphic</beamGraphic>
