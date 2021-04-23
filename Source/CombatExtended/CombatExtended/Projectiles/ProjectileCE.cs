@@ -392,7 +392,16 @@ namespace CombatExtended
 
         public virtual void RayCast(Thing launcher, VerbProperties verbProps, Vector2 origin, float shotAngle, float shotRotation, float shotHeight = 0f, float shotSpeed = -1f, float spreadDegrees = 0f, float aperatureSize = 0.03f, Thing equipment = null) {
 
-            float magicSpreadFactor = Mathf.Sin(0.06f / 2 * Mathf.Deg2Rad) + aperatureSize;
+
+	    /* Calculate a magic reference point for damage attenuation for lasers.
+	       0.06 (degrees) works out to 1mRad, which is about 2x what modern top-end lasers can do
+	       We then calculate the radius of the reference beam at 1 cell away.
+	       By definition, damage at this range equals the listed damage of a normal-quality laser.
+	       So magicLaserDamageConstant is the constant that makes our reference laser do the correct damage at 1 cell.
+	       The damage at $range is then porportional to the cross-sectional area at 1 cell / the cross-sectional area at $range.
+	    */
+	    const float highGradeLaserDivergence = 0.06f; 
+            float magicSpreadFactor = Mathf.Sin(highGradeLaserDivergence / 2 * Mathf.Deg2Rad) + aperatureSize;
             float magicLaserDamageConstant = 1 / (magicSpreadFactor * magicSpreadFactor * 3.14159f);
 
             ProjectilePropertiesCE pprops = def.projectile as ProjectilePropertiesCE;
