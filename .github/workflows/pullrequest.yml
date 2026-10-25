@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v3
@@ -23,7 +23,7 @@ jobs:
         git pull --no-ff --no-commit --allow-unrelated-histories -X theirs origin pull/${{ github.event.pull_request.number }}${{ github.event.inputs.PR }}/head:
         git status
         rm -rf *.py *.so ./*/*.py ./*/*.so
-        wget https://raw.githubusercontent.com/CombatExtended-Continued/CombatExtended/Development/Make.py -O Make.py
+        wget https://raw.githubusercontent.com/perkinslr/CombatExtended/Development/Make.py -O Make.py
         wget https://raw.githubusercontent.com/CombatExtended-Continued/CombatExtended/Development/BuildCompat.py -O BuildCompat.py
         mkdir -p Assemblies
         mkdir -p ${{ runner.temp }}/downloads
