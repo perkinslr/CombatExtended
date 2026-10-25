@@ -9,9 +9,9 @@ from dataclasses import dataclass
 import subprocess
 
 tdir = tempfile.gettempdir()
-CSC = ["csc"]
-args = [*CSC, "-unsafe", "-warnaserror", "-nostdlib", "-target:library"]
-
+CSC = ["mono-csc"]
+args = [*CSC, "-unsafe", "-warnaserror", "-nowarn:CS1701", "-target:library", "-nostdlib"]
+#args = [*CSC, "-unsafe", "-warnaserror", "-nostdlib", "-target:library"]
 
 def system(*cmd):
     sp = subprocess.Popen(cmd)
@@ -40,7 +40,7 @@ class PublicizeTarget(object):
 
 def parseArgs(argv):
     argParser = argparse.ArgumentParser(description="Automate compiling C# projects on Linux, using Mono")
-    argParser.add_argument("--reference", type=str, metavar="PATH", help="Location of Rimworld Reference libraries")
+    argParser.add_argument("--reference", type=str, action="append", metavar="PATH", help="Location of Rimworld Reference libraries")
     argParser.add_argument("--output", "-o", type=str, default="Assemblies/CombatExtended.dll", help="Output filename")
     argParser.add_argument("--csproj", type=str, default="Source/CombatExtended/CombatExtended.csproj", help="C# project to build.")
     argParser.add_argument("--all-libs", action="store_true", default=False, help="Reference all dlls in $reference, even those not specified by the .csproj file")
@@ -49,7 +49,7 @@ def parseArgs(argv):
     argParser.add_argument("--publicizer", type=str, metavar="PATH", help="Location of AssemblyPublicizer source code or parent directory of AssemblyPublicizer.exe")
     argParser.add_argument("--debug", action="store_true", default=False, help="Define `DEBUG` when calling csc")
     argParser.add_argument("--refout", metavar="PATH", default=None, help="Specify where to save a reference library")
-    argParser.add_argument("--csc", metavar="CSC", default=None, help="Specify directory containing updated csc.exe")
+    argParser.add_argument("--csc", metavar="CSC", default=None, help="Specify directory containing updated csc")
 
     options = argParser.parse_args(argv[1:])
     if not options.download_libs and options.reference is None:
@@ -60,12 +60,16 @@ def parseArgs(argv):
         exit(1)
 
     if options.reference is None:
-        options.reference = f"{tdir}/rwreference"
+        options.reference = [f"{tdir}/rwreference"]
 
     if options.csc is not None:
         global CSC
         args[0] = options.csc + "/csc"
         CSC = args[0:1]
+#        global CSC
+#        args[0] = options.csc + "/csc.exe"
+#        args.insert(0, "mono")
+#        CSC = args[0:2]
         
     return options
 
@@ -88,7 +92,7 @@ def unpackLib(path, dest, verbose):
 def resolveLibrary(library, reference, csproj, verbose):
     if library.hintPath:
         if verbose > 1:
-            print("Adding library via hintPath: {hintPath}")
+            print(f"Adding library via hintPath: {library.hintPath}")
         base_dir = os.path.split(csproj)[0]
         t_path = os.path.join(base_dir, library.hintPath)
         if os.path.isabs(library.hintPath):
@@ -96,8 +100,12 @@ def resolveLibrary(library, reference, csproj, verbose):
         else:
             return os.path.relpath(t_path)
     if verbose > 1:
-        print("Searching for library named {library.name}.dll")
-    return os.path.join(reference, library.name+'.dll')
+        print(f"Searching for library named {library.name}.dll")
+    for r in reference:
+        p = os.path.join(reference, library.name + '.dll')
+        if os.path.exists(p):
+            return p
+    raise RuntimeError(f"Required library {librar.name}.dll not found")
     
 
 def publicize(p, publicizer, verbose):
@@ -105,7 +113,8 @@ def publicize(p, publicizer, verbose):
         print(f"Publicizing Assembly: {p}")
     cwd = os.getcwd()
     os.chdir(p.rsplit('/',1)[0])
-    system(f"mono", publicizer, "--exit", "-i", p, "-o", f"{p[:-4]}_publicized.dll")
+    if system(f"mono", publicizer, "--exit", "-i", p, "-o", f"{p[:-4]}_publicized.dll"):
+        raise RuntimeError("Failed to publicize assembly")
     os.chdir(cwd)
     return p[:-4]+'_publicized.dll'
 
@@ -127,8 +136,10 @@ def makePublicizer(p, verbose):
         system(f"unzip", *quiet, "-o", f"{tdir}/downloads/mono.cecil.zip", "-d", ".")
         system(f"unzip", *quiet, "-o", f"{tdir}/downloads/mono.options.zip", "-d", ".")
         os.system("cp lib/net40/*dll .")
-        system(*CSC, "-out:AssemblyPublicizer.exe", "./AssemblyPublicizer/AssemblyPublicizer.cs", "./AssemblyPublicizer/Properties/AssemblyInfo.cs", "-r:Mono.Options.dll", "-r:Mono.Cecil.dll")
-        system("mono", "--aot", "AssemblyPublicizer.exe")
+        if system("mono-csc", "-out:AssemblyPublicizer.exe", "./AssemblyPublicizer/AssemblyPublicizer.cs", "./AssemblyPublicizer/Properties/AssemblyInfo.cs", "-r:Mono.Options.dll", "-r:Mono.Cecil.dll"):
+            raise RuntimeError("Could not compile AssemblyPublicizer")
+        if system("mono", "--aot", "AssemblyPublicizer.exe"):
+            raise RuntimeError("Could not aot AssemblyPublicizer")
         os.chdir(cwd)
     return ap_path
 
@@ -258,7 +269,7 @@ def main(argv=sys.argv):
     verbose = options.verbose
 
     system(f"mkdir", "-p", f"{tdir}/downloads/unpack")
-    system(f"mkdir", "-p", options.reference)
+    system(f"mkdir", "-p", options.reference[0])
         
     packages, libraries, removed_libraries, publicized_libraries, sources = parse_csproj(options.csproj, options.verbose)
     if publicized_libraries:
@@ -274,15 +285,16 @@ def main(argv=sys.argv):
             unpackLib(package.destination, f"{tdir}/downloads/unpack", verbose=verbose)
             time.sleep(1)
         system(f"chmod", "-R", "+r", f"{tdir}/downloads/unpack")
-        os.system(f"cp -r {tdir}/downloads/unpack/ref/net472/* {options.reference}")
-        os.system(f"cp -r {tdir}/downloads/unpack/lib/net472/* {options.reference}")
+        os.system(f"cp -r {tdir}/downloads/unpack/ref/net10.0/* {options.reference[0]}")
+        os.system(f"cp -r {tdir}/downloads/unpack/lib/net10.0/* {options.reference[0]}")
 
     libraries = [resolveLibrary(l, options.reference, options.csproj, verbose) for l in libraries if '$' not in l.name]
 
     if options.all_libs:
-        for ref in os.listdir(options.reference):
-            if ref.endswith(".dll") and not ref.endswith("_publicized.dll"):
-                libraries.append(os.path.join(options.reference, ref))
+        for search_path in options.reference:
+            for ref in os.listdir(search_path):
+                if ref.endswith(".dll") and not ref.endswith("_publicized.dll"):
+                    libraries.append(os.path.join(search_path, ref))
 
     for p in publicized_libraries:
         for l in libraries:
