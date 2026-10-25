@@ -64,9 +64,8 @@ def parseArgs(argv):
 
     if options.csc is not None:
         global CSC
-        args[0] = options.csc + "/csc.exe"
-        args.insert(0, "mono")
-        CSC = args[0:2]
+        args[0] = options.csc + "/csc"
+        CSC = args[0:1]
         
     return options
 
